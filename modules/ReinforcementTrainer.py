@@ -20,7 +20,7 @@ class ReinforcementTrainer:
         self.benchmark_score = []
         self.train_score = []
 
-    def train(self):
+    def train_one(self):
         if random.random() < 0.5:
             player1 = self.learner
             player1_symbol = self.learner_symbol
@@ -54,14 +54,14 @@ class ReinforcementTrainer:
     def loop(self, step):
         percent_10 = max(int(step * 0.1), 100)
         for i in range(step):
-            if (i % percent_10) == 0:
-                print(i, 'steps trained')
-                self.benchmark(100)
-                self.self_play_benchmark(1000)
-            self.train()
+            # if (i % percent_10) == 0:
+            #     self.benchmark(1000)
+            #     self.opponent_benchmark(1000)
+            self.train_one()
+        self.benchmark(1000)
+        self.opponent_benchmark(1000)
 
-
-    def self_play_benchmark(self, step):
+    def opponent_benchmark(self, step):
         win_count = 0
         lose_count = 0
         draw_count = 0

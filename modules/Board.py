@@ -15,13 +15,15 @@ class Board:
     def get_free_positions(self):
         return [pos for pos in range(len(self.current_board)) if self.current_board[pos] == ' ']
 
-    def get_possible_states(self, symbol):
+    def get_possible_states(self, play_symbol, main_symbol=None):
+        if main_symbol is None:
+            main_symbol = play_symbol
         free_positions = self.get_free_positions()
         states = []
         for free_position in free_positions:
             tmp = self.current_board.copy()
-            tmp[free_position] = symbol
-            states.append(Board.get_hash(tmp, symbol))
+            tmp[free_position] = play_symbol
+            states.append(Board.get_hash(tmp, main_symbol))
         return states
 
     def check_winner(self):

@@ -24,7 +24,7 @@ class HumanPlayer:
         is_move_made = False
         current_board = None
         while not is_move_made:
-            next_position = input()
+            next_position = input('Input a position row,col: ')
             row, col = next_position.split(',')
             row = int(row.strip()) - 1
             col = int(col.strip()) - 1

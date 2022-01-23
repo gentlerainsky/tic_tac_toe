@@ -24,20 +24,16 @@ class Policy:
         state, next_state = reversed_history[0]
         self.table[state][next_state] = score
         for state, next_state in reversed_history[1:]:
-            # value = self.table[state][next_state] + self.learning_rate * (self.decay_rate * current_score - self.table[state][next_state])
-            # self.table[state][next_state] = value
-            self.table[state][next_state] = (1 - self.learning_rate) * self.table[state][next_state] + self.learning_rate * self.decay_rate * current_score
+            self.table[state][next_state] = (
+                    (1 - self.learning_rate) * self.table[state][next_state]
+                    + self.learning_rate * self.decay_rate * current_score
+            )
             current_max = -1
             for s in self.table[state].keys():
                 if self.table[state][s] > current_max:
                     current_max = self.table[state][s]
             current_score = current_max
 
-    def load(self):
-        pass
-
-    def save(self):
-        pass
 
 class ReinforcementLearningPlayer:
     def __init__(self, board_size, policy, exploration_rate, win_score=1, lose_score=0, draw_score=0.1):
@@ -65,15 +61,21 @@ class ReinforcementLearningPlayer:
         self.policy.init_state(current_state, next_possible_states)
         if self.is_explore and (random.random() < self.exploration_rate):
             next_state = random.choice(next_possible_states)
+            if self.is_thinking_out_loud:
+                print('play randomly')
+                print('chosen path:', next_state)
         else:
             max_value = -math.inf
             next_state = None
             if self.is_thinking_out_loud:
+                print('ReinforcementLearningPlayer Policy Value (1 refer to itself, -1 refer to the opponent)')
                 pprint(self.policy.table[current_state])
             for state in next_possible_states:
                 if self.policy.table[current_state][state] > max_value:
                     max_value = self.policy.table[current_state][state]
                     next_state = state
+            if self.is_thinking_out_loud:
+                print('chosen path:', next_state, 'with value:', max_value)
         self.state_history.append((current_state, next_state))
         next_state = board.unhash(next_state, self.symbol)
         return next_state
@@ -83,9 +85,7 @@ class ReinforcementLearningPlayer:
             self.policy.update(self.state_history, self.win_score)
 
     def draw(self):
-        # if not self.train_on_lose:
         self.policy.update(self.state_history, self.draw_score)
 
     def lose(self):
         self.policy.update(self.state_history, self.lose_score)
-
